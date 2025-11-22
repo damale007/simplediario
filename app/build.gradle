@@ -1,0 +1,70 @@
+apply plugin: 'com.android.application'
+apply plugin: 'org.jetbrains.kotlin.android'
+
+import java.util.Properties
+
+// 👇 Cargar local.properties en Groovy
+def localProperties = new Properties()
+def localFile = rootProject.file("local.properties")
+if (localFile.exists()) {
+    localProperties.load(localFile.newDataInputStream())
+}
+
+// 👇 Leer las claves
+def idAdmob = localProperties.getProperty("ID_ADMOB") ?: ""
+def unitId = localProperties.getProperty("UNIT_ID") ?: ""
+
+android {
+    namespace 'com.conadasoft.simplediario'
+    compileSdk 36
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    defaultConfig {
+        applicationId "com.conadasoft.simplediario"
+        minSdk 28
+        targetSdk 36
+        versionCode 5
+        versionName '1.1'
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "ID_ADMOB", "\"$idAdmob\"")
+        buildConfigField("String", "UNIT_ID", "\"$unitId\"")
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    viewBinding {
+        enable = true
+    }
+
+}
+
+dependencies {
+
+    implementation libs.appcompat
+    implementation libs.material
+    implementation libs.activity
+    implementation libs.constraintlayout
+    implementation libs.preference
+    implementation(libs.biometric)
+    implementation libs.play.services.ads
+    implementation libs.core.ktx
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+}
